@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri Smart Africa — Precision Agronomy & Plantix AI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS SDK CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col font-sans">
+
+    <!-- ========================================== -->
+    <!-- MANDATORY AUTH & TERMS & CONDITIONS MODAL  -->
+    <!-- ========================================== -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 overflow-y-auto max-h-[90vh]">
+            <div class="text-center mb-6">
+                <div class="bg-emerald-100 text-emerald-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-2xl">
+                    🌱
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900">Agri Smart Africa</h2>
+                <p class="text-sm text-gray-600">Create an account to access precision agronomy tools.</p>
+            </div>
+
+            <form id="signUpForm" onsubmit="handleSignUp(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Full Name</label>
+                    <input type="text" id="fullName" required placeholder="e.g. Chileshe Mulenga" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Phone Number (+260)</label>
+                    <input type="tel" id="phoneNumber" required placeholder="+260 971 234 567" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Province / District</label>
+                    <select id="province" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <option value="Central (Mkushi)">Central Province (Mkushi / Chisamba)</option>
+                        <option value="Lusaka">Lusaka Province</option>
+                        <option value="Eastern (Chipata)">Eastern Province (Chipata)</option>
+                        <option value="Southern (Choma)">Southern Province (Choma / Mazabuka)</option>
+                        <option value="Copperbelt">Copperbelt Province</option>
+                        <option value="Other">Other Region</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Email Address</label>
+                    <input type="email" id="email" required placeholder="farmer@example.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Password</label>
+                    <input type="password" id="password" required placeholder="••••••••" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+
+                <!-- Mandatory Terms & Conditions Checkbox -->
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <label class="flex items-start space-x-3 cursor-pointer">
+                        <input type="checkbox" id="termsAccepted" required class="mt-1 h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
+                        <span class="text-xs text-gray-700">
+                            I accept the <strong>Terms of Service</strong> & <strong>Agronomic AI Disclaimer</strong>. I understand AI crop recommendations are for guidance and should be verified for chemical handling safety.
+                        </span>
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition duration-200">
+                    Accept Terms & Enter App
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MAIN APP DASHBOARD (Hidden until auth)     -->
+    <!-- ========================================== -->
+    <div id="mainDashboard" class="hidden flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="bg-emerald-800 text-white shadow-lg sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-emerald-600 p-2 rounded-xl text-xl">🌱</div>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight">Agri Smart Africa</h1>
+                        <p class="text-xs text-emerald-200">Precision Agronomy & Offline AI Platform</p>
+                    </div>
+                </div>
+                <span class="text-xs bg-emerald-700 px-3 py-1 rounded-full text-emerald-100 font-medium">Zambia Pilot Active</span>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+            <!-- Alert Banner -->
+            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-amber-800 uppercase">Regional Pest Alert</p>
+                        <p class="text-sm text-amber-900">Fall Armyworm alert active in Mkushi & Chisamba maize blocks. Inspect leaves immediately.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Feature Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- 1. AI Leaf Doctor -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                    <div class="text-2xl mb-2">📸</div>
+                    <h3 class="font-bold text-gray-900 text-lg">AI Leaf Doctor</h3>
+                    <p class="text-xs text-gray-600 mb-4">Scan crop leaves to diagnose pests and diseases offline with knapsack mixing ratios.</p>
+                    <button onclick="simulateScan()" class="w-full bg-emerald-600 text-white text-sm font-semibold py-2 rounded-lg hover:bg-emerald-700">Scan Leaf Now</button>
+                    <div id="scanResult" class="hidden mt-3 p-3 bg-emerald-50 rounded-lg text-xs text-emerald-900"></div>
+                </div>
+
+                <!-- 2. Satellite NDVI Field Mapper -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                    <div class="text-2xl mb-2">🛰️</div>
+                    <h3 class="font-bold text-gray-900 text-lg">Satellite NDVI Mapper</h3>
+                    <p class="text-xs text-gray-600 mb-4">Sentinel-2 5-day crop vigor and moisture stress monitoring for mapped field polygons.</p>
+                    <div class="bg-gray-100 h-24 rounded-lg flex items-center justify-center text-xs text-gray-500 font-mono">
+                        [NDVI Map Active: Mean Index 0.74]
+                    </div>
+                </div>
+
+                <!-- 3. Weather Spray Window -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                    <div class="text-2xl mb-2">🌦️</div>
+                    <h3 class="font-bold text-gray-900 text-lg">Spray Window Radar</h3>
+                    <p class="text-xs text-gray-600 mb-2">Hyper-local wind drift & pre-rain indicator.</p>
+                    <div class="p-3 bg-green-100 text-green-800 rounded-lg font-bold text-xs">
+                        ✅ SAFE TO SPRAY — Wind: 6 km/h | Delta-T: 4.1
+                    </div>
+                </div>
+
+                <!-- 4. Direct Zambian Agronomist Desk -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 md:col-span-2 lg:col-span-3">
+                    <div class="text-2xl mb-2">📞</div>
+                    <h3 class="font-bold text-gray-900 text-lg">Zambian Partner Agronomist Desk</h3>
+                    <p class="text-xs text-gray-600 mb-4">Direct official contact hotlines for input suppliers and emergency agricultural services.</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="p-3 bg-gray-50 rounded-lg border">
+                            <h4 class="font-bold text-xs text-gray-900">Syngenta Zambia</h4>
+                            <p class="text-xs text-gray-500">Crop Protection Advisory</p>
+                            <a href="tel:+260211237908" class="text-xs font-bold text-emerald-700 hover:underline">+260 211 237908</a>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg border">
+                            <h4 class="font-bold text-xs text-gray-900">SARO Agro-Industrial</h4>
+                            <p class="text-xs text-gray-500">Machinery & Irrigation</p>
+                            <a href="tel:+260211241477" class="text-xs font-bold text-emerald-700 hover:underline">+260 211 241477</a>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg border">
+                            <h4 class="font-bold text-xs text-gray-900">Bayer Zambia / DEKALB</h4>
+                            <p class="text-xs text-gray-500">Seed & Armyworm Hotline</p>
+                            <a href="tel:+260211286700" class="text-xs font-bold text-emerald-700 hover:underline">+260 211 286700</a>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg border">
+                            <h4 class="font-bold text-xs text-gray-900">Ministry of Agriculture</h4>
+                            <p class="text-xs text-gray-500">National Pest Emergency</p>
+                            <a href="tel:+260211252652" class="text-xs font-bold text-emerald-700 hover:underline">+260 211 252652</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Handling Auth & Interactions -->
+    <script>
+        // Supabase Configuration (Optional: Add keys when connecting to Supabase cloud)
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        let supabase = null;
+        if (SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        async function handleSignUp(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value;
+            const termsAccepted = document.getElementById('termsAccepted').checked;
+
+            if (!termsAccepted) {
+                alert('You must accept the terms to proceed.');
+                return;
+            }
+
+            // Hide Auth Modal and open Dashboard
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('mainDashboard').classList.remove('hidden');
+
+            alert('Welcome, ' + fullName + '! Agri Smart Africa is ready.');
+        }
+
+        function simulateScan() {
+            const res = document.getElementById('scanResult');
+            res.classList.remove('hidden');
+            res.innerHTML = "<strong>Result:</strong> Tomato Late Blight Detected (96.4% confidence)<br><strong>Remedy:</strong> Mancozeb + Metalaxyl-M<br><strong>Dosage:</strong> 2.5 caps per 16L knapsack sprayer.";
+        }
+    </script>
+</body>
+</html>
